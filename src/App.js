@@ -2,6 +2,7 @@ import './App.css';
 import { Form, Button, Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
 import JishoAPI from 'unofficial-jisho-api';
+import { useState } from 'react';
 
 const jisho = new JishoAPI();
 
@@ -10,21 +11,29 @@ const PROXY = window.location.hostname === "localhost"
   : "/cors-proxy";
 
 function App() {
+  const [loading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState();
+
   const onSubmit = async (event) => {
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
 
-    const tsv = await fetch(form.words.value);
+    setIsLoading(true);
+    const tsv = await fetch(form.words.value, setMessage);
+    download(tsv);
+
+    setIsLoading(false);
+    console.log(tsv);
+  }
+
+  const download = (tsv) => {
     var encodedUri = `data:text/tsv;charset=utf-8;${encodeURI(tsv)}`;
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `flash-cards-${Date.now()}.tsv`);
     document.body.appendChild(link); // Required for FF
-
-link.click(); // This will download the data file named "my_data.csv".
-    
-    console.log(tsv);
+    link.click();
   }
 
   return (
@@ -41,9 +50,16 @@ link.click(); // This will download the data file named "my_data.csv".
                 </Form.Label>
                 <Form.Control name="words" as="textarea" rows={20} />
               </Form.Group>
-              <Button variant="primary" type="submit">
-                Create Flash Cards
-              </Button>
+              {loading ? (
+                <Button className="btn btn-primary" type="button" disabled>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  {' '}Generating...{message}
+                </Button>
+              ) : (
+                <Button className="btn btn-primary" type="submit">
+                  Create Flash Cards
+                </Button>
+              )}
             </Form>
           </Col>
         </Row>
@@ -52,7 +68,7 @@ link.click(); // This will download the data file named "my_data.csv".
   );
 }
 
-async function fetch(words) {
+async function fetch(words, setMessage) {
   if(!words) {
     return;
   }
@@ -75,6 +91,7 @@ async function fetch(words) {
 
       try {
           console.log('searching for', term);
+          setMessage(term);
           const rsp = await axios.get(`${PROXY}/https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(term)}`);
           if (rsp.data?.data) {
               const def = rsp.data.data[0];
