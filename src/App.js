@@ -1,10 +1,7 @@
 import './App.css';
 import { Form, Button, Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
-import JishoAPI from 'unofficial-jisho-api';
 import { useState } from 'react';
-
-const jisho = new JishoAPI();
 
 const PROXY = window.location.hostname === "localhost"
   ? "https://cors-anywhere.herokuapp.com"
@@ -97,6 +94,7 @@ async function fetch(words, setMessage) {
               const def = rsp.data.data[0];
               const reading = def.japanese.find(d => d.word === term)?.reading || term;
               const [mainDef, ...otherDefs] = def.senses;
+              console.log(otherDefs);
               const eigoDef = mainDef.english_definitions.join(", ");
               const usageCategory = mainDef.parts_of_speech.join(", ");
               
