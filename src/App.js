@@ -2,6 +2,8 @@ import './App.css';
 import { Form, Button, Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
 import { useState } from 'react';
+import jishoApi from 'unofficial-jisho-api';
+const jisho = new jishoApi();
 
 const PROXY = window.location.hostname === "localhost"
   ? "https://cors-anywhere.herokuapp.com"
@@ -25,7 +27,7 @@ function App() {
   }
 
   const download = (tsv) => {
-    var encodedUri = `data:text/tsv;charset=utf-8;${encodeURI(tsv)}`;
+    var encodedUri = `data:text/tsv;charset=utf-8,${encodeURIComponent(tsv)}`;
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `flash-cards-${Date.now()}.tsv`);
@@ -35,17 +37,25 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Anki Creator</h1>
       <Container>
+        <Row>
+          <Col>
+            <h1>Ankify</h1>
+          </Col>
+        </Row>
         <Row>
           <Col>
             <Form onSubmit={onSubmit}>
               <Form.Group>
                 <Form.Label>
-                  <h2>Japanese Words</h2>
-                  <p>Separate them by a new line.</p>
+                  <p>Enter words separated by a new line.</p>
                 </Form.Label>
-                <Form.Control name="words" as="textarea" rows={20} />
+                <Form.Control
+                  name="words"
+                  as="textarea"
+                  rows={20}
+                  placeholder={'時間\n友達\n悲観的\nアホ\n微妙'}
+                />
               </Form.Group>
               {loading ? (
                 <Button className="btn btn-primary" type="button" disabled>
@@ -58,6 +68,33 @@ function App() {
                 </Button>
               )}
             </Form>
+          </Col>
+          <Col>
+              <h4>How to use</h4>
+              <p>
+                <ol>
+                  <li>Enter the words, separated by a space.</li>
+                  <li>Click Create Flash Cards</li>
+                  <li>Download the file</li>
+                  <li>Open Anki, navigate to Decks, then Import File...</li>
+                  <li>Select the downloaded file.
+                    <ol>
+                      <li><strong>Type</strong>: Japanese (recognition&amp;recall)</li>
+                      <li><strong>Fields Separated By</strong>: if 'Tab' isn't already detected, enter the tab character: \t</li>
+                      <li><strong>Allow HTML in Fields</strong>: Checked</li>
+                      <li><strong>Field mapping</strong>
+                        <ul>
+                          <li>Field 1 mapped to Expression</li>
+                          <li>Field 2 mapped to Meaning</li>
+                          <li>Field 3 mapped to Reading</li>
+                          <li>Field 4 mapped to Usage</li>
+                        </ul>
+                      </li>
+                    </ol>
+                  </li>
+                  <li>ペラペラになる!</li>
+                </ol>
+              </p>
           </Col>
         </Row>
       </Container>
@@ -98,15 +135,16 @@ async function fetch(words, setMessage) {
               const eigoDef = mainDef.english_definitions.join(", ");
               const usageCategory = mainDef.parts_of_speech.join(", ");
               
-              let examples = []
+              let examples = ['None found'];
               try {
-                  //const exampleRsp = await jisho.searchForExamples(term);
-                  //examples = exampleRsp.results.slice(0, 3).map((result, idx) => `${idx + 1}. ${result.kanji}<br/>${result.kana}<br/>${result.english}`);
+                  const exampleRsp = await jisho.searchForExamples(term);
+                  examples = exampleRsp.results.slice(0, 3).map((result, idx) => `${idx + 1}. ${result.kanji}<br/>${result.kana}<br/>${result.english}`);
               } catch (error) {
+                  examples = ['Error'];
                   console.error('failed searching for examples');
               }
 
-              strings.push(`${renderedTerm}\t${eigoDef}<br/>(${usageCategory})\t${reading}\t${examples.join("<br/><br/>")}`);
+              strings.push(`${renderedTerm}\t${eigoDef}<br/><small><italic>(${usageCategory})</italic></small>\t${reading}\t${examples.join("<br/><br/>")}`);
           } 
       } catch(error) {
           strings.push(`${renderedTerm}\tError\tError\tError`);
