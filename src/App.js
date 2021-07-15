@@ -65,9 +65,9 @@ function App() {
             <Logo />
           </Col>
           <Col xs={6} md={9}>
-            <h1 className="d-none d-lg-block" style={{marginTop: 110}}>Generate your Anki flashcards –with sample sentences 🍒</h1>
-            <h2 className="d-none d-sm-block d-lg-none" style={{marginTop: 70}}>Generate your Anki flashcards –with sample sentences 🍒</h2>
-            <h4 className="d-block d-sm-none" style={{marginTop: 70}}>Generate your Anki flashcards –with sample sentences 🍒</h4>
+            <h1 className="d-none d-lg-block" style={{marginTop: 110}}>Generate your Anki flashcards 🍒</h1>
+            <h2 className="d-none d-sm-block d-lg-none" style={{marginTop: 70}}>Generate your Anki flashcards 🍒</h2>
+            <h4 className="d-block d-sm-none" style={{marginTop: 70}}>Generate your Anki flashcards 🍒</h4>
           </Col>
         </Row>
         <Row>
@@ -108,10 +108,10 @@ function App() {
           </Col>
           <Col className="mt-3">
             <h4>Examples</h4>
-            <img alt="blabal" style={{marginBottom: 5}} className="flashcard-sample" height="320" width="49%" src={`${process.env.PUBLIC_URL}/fc1.png`} />&nbsp;
-            <img alt="blabla2" className="flashcard-sample" height="320" width="49%" src={`${process.env.PUBLIC_URL}/fc2.png`} />
-            <img alt="blabal23" style={{marginBottom: 5}} className="flashcard-sample" height="320" width="49%" src={`${process.env.PUBLIC_URL}/fc3.png`} />&nbsp;
-            <img alt="alskjdaflks" className="flashcard-sample" height="320" width="49%" src={`${process.env.PUBLIC_URL}/fc4.png`} />
+            <img alt="blabal" style={{marginBottom: 5}} className="flashcard-sample" width="260" src={`${process.env.PUBLIC_URL}/fc1.png`} />&nbsp;
+            <img alt="blabla2" className="flashcard-sample" width="260" src={`${process.env.PUBLIC_URL}/fc2.png`} />
+            <img alt="blabal23" style={{marginBottom: 5}} className="flashcard-sample" width="260" src={`${process.env.PUBLIC_URL}/fc3.png`} />&nbsp;
+            <img alt="alskjdaflks" className="flashcard-sample" width="260" src={`${process.env.PUBLIC_URL}/fc4.png`} />
           </Col>
         </Row>
 
